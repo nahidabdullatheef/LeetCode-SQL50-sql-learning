@@ -2,14 +2,13 @@
 
 Welcome to the **SQL50 Learning Project** – a beginner-friendly SQL practice set based on the popular [LeetCode SQL50 problems](https://leetcode.com/problemset/database/). This project contains the full set of questions, schema examples, expected outputs, and verified answers, all in one place for easier learning.
 
-## 📁 Folder Structure
+## 📁 Files
 
 LeetCodeSQL50/
-├── data/
-│   ├── LCSQL50.txt                  # Full problems and answers
-│   ├── lcsqlfifty questions.txt     # Questions only
-│   └── lcsqlfifty answers.txt       # Answers only 
-├── README.md
+LCSQL50.txt                  # Full problems and answers.
+lcsqlfifty questions.txt     # Questions only.
+lcsqlfifty answers.txt       # Answers only .
+README.md                    #readme markdown file.
 
 
 ## 🚀 How to Use
