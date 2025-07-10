@@ -4,11 +4,13 @@ Welcome to the **SQL50 Learning Project** – a beginner-friendly SQL practice s
 
 ## 📁 Files
 
-LeetCodeSQL50/
-LCSQL50.txt                  # Full problems and answers.
-lcsqlfifty questions.txt     # Questions only.
-lcsqlfifty answers.txt       # Answers only .
-README.md                    #readme markdown file.
+| File Name               | Description                     |
+|-------------------------|---------------------------------|
+|  lcsqlfifty.txt         | Full problems and answers       |
+|  LCSQL50.txt            | Questions only                  |
+|  lcsqlfifty answers.txt | Answers only                    |
+|  README.md              | This markdown file              |
+
 
 
 ## 🚀 How to Use
