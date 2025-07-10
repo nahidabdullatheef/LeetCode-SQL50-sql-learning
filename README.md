@@ -6,9 +6,9 @@ Welcome to the **SQL50 Learning Project** – a beginner-friendly SQL practice s
 
 | File Name               | Description                     |
 |-------------------------|---------------------------------|
-|  lcsqlfifty.txt         | Full problems and answers       |
-|  LCSQL50.txt            | Questions only                  |
-|  lcsqlfifty answers.txt | Answers only                    |
+|  lcsqlfifty.txt         | Full problems and answers(data) |
+|  LCSQL50.txt            | Questions only(data)            |
+|  lcsqlfifty answers.txt | Answers only(data)              |
 |  README.md              | This markdown file              |
 
 
