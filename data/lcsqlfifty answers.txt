@@ -1,0 +1,765 @@
+SQL 50 – 1. SELECT .
+
+1757. Recyclable and Low Fat Products
+
+Table: 1757Products.
+
+A.
+" 
+SELECT product_id  
+FROM Products
+WHERE low_fats = 'Y' AND recyclable = 'Y';
+"
+
+
+584. Find Customer Referee
+
+Table: 584Customer.
+
+A.
+"
+SELECT name  
+FROM Customer  
+WHERE referee_id != 2 OR referee_id IS NULL; 
+"
+
+
+595. Big Countries
+
+Table: 595World.
+
+A.
+"
+SELECT name, population, area  
+FROM World  
+WHERE area >= 3000000 OR population >= 25000000;
+"
+
+
+1148. Article Views I
+
+Table: 1148Views.
+
+A.
+"
+SELECT DISTINCT author_id AS id  
+FROM Views  
+WHERE author_id = viewer_id  
+ORDER BY id ASC;
+"
+
+
+1683. Invalid Tweets
+
+Table: 1683Tweets.
+
+A.
+"
+SELECT tweet_id  
+FROM Tweets  
+WHERE LENGTH(content) > 15;
+"
+
+
+
+2. BASIC JOINS .
+
+1378. Replace Employee ID With The Unique Identifier
+
+Tables: 1378Employees, 1378EmployeeUNI.
+
+A.
+"
+SELECT eu.unique_id, e.name  
+FROM Employees e  
+LEFT JOIN EmployeeUNI eu ON e.id = eu.id;
+"
+
+
+1068. Product Sales Analysis I
+
+Tables: 1068Sales, 1068Product.
+
+A.
+"
+SELECT product_name, year, price  
+FROM Sales  
+JOIN Product ON Sales.product_id = Product.product_id;
+"
+
+
+1581. Customer Who Visited but Did Not Make Any Transactions
+
+Table: 1581Visits, 1581Transactions.
+
+A.
+"
+SELECT v.customer_id, COUNT(v.visit_id) AS count_no_trans  
+FROM Visits v  
+LEFT JOIN Transactions t ON v.visit_id = t.visit_id  
+WHERE t.transaction_id IS NULL  
+GROUP BY v.customer_id;
+"
+
+
+197. Rising Temperature
+
+Table: 197Weather.
+
+A.
+"
+SELECT b.id  
+FROM Weather a  
+JOIN Weather b ON DATEDIFF(a.recordDate, b.recordDate) = -1  
+AND b.temperature > a.temperature;
+"
+
+
+1661. Average Time of Process per Machine
+
+Table: 1661Activity.
+
+A.
+"
+SELECT a.machine_id, ROUND(AVG(b.timestamp - a.timestamp), 3) AS processing_time  
+FROM Activity a  
+JOIN Activity b  
+ON a.machine_id = b.machine_id AND a.process_id = b.process_id  
+WHERE a.activity_type = 'start' AND b.activity_type = 'end'  
+GROUP BY a.machine_id;
+"
+
+
+577. Employee Bonus
+
+Tables: 577Employee, 577Bonus.
+
+A.
+"
+SELECT name, bonus  
+FROM Employee e  
+LEFT JOIN Bonus b ON e.empId = b.empId  
+WHERE bonus < 1000 OR bonus IS NULL;
+"
+
+
+1280. Students and Examinations
+
+Tables: 1280Students, 1280Subjects, 1280Examinations.
+
+A.
+"
+SELECT students.student_id, students.student_name, 
+subjects.subject_name, COUNT(examinations.subject_name) AS attended_exams
+FROM students 
+JOIN subjects 
+LEFT JOIN examinations 
+ON students.student_id = examinations.student_id AND subjects.subject_name = examinations.subject_name
+GROUP BY students.student_id, students.student_name, subjects.subject_name
+ORDER BY students.student_id, subjects.subject_name;
+"
+
+
+570. Managers with at Least 5 Direct Reports
+
+Table: 570Employee.
+
+A.
+"
+SELECT name FROM Employee  
+WHERE id IN (
+SELECT managerId  FROM Employee  
+GROUP BY managerId 
+HAVING COUNT(id) >= 5);
+"
+
+
+1934. Confirmation Rate
+
+Tables: 1934Signups, 1934Confirmations.
+
+A.
+"
+SELECT s.user_id, IFNULL(ROUND(SUM(action = 'confirmed') / COUNT(*), 2), 0.00) AS confirmation_rate
+FROM Signups s
+LEFT JOIN Confirmations c ON s.user_id = c.user_id
+GROUP BY s.user_id;
+"
+
+
+
+3. BASIC AGGREGATE FUNCTIONS .
+
+620. Not Boring Movies.
+
+Table: 620Cinema.
+
+A.
+"
+SELECT * FROM Cinema  
+WHERE id % 2 != 0 AND description != 'boring'  
+ORDER BY rating DESC;
+"
+
+
+1251. Average Selling Price.
+
+Tables: 1251Prices, 1251UnitsSold.
+
+A.
+"
+SELECT p.product_id, IFNULL(ROUND(SUM(p.price * u.units) / SUM(u.units), 2), 0) AS average_price
+FROM Prices p
+LEFT JOIN UnitsSold u 
+ON p.product_id = u.product_id AND u.purchase_date >= p.start_date
+AND u.purchase_date <= p.end_date
+GROUP BY p.product_id;
+"
+
+
+1075. Project Employees I.
+
+Tables: 1075Project, 1075Employee.
+
+A.
+"
+SELECT p.project_id, ROUND(AVG(e.experience_years), 2) AS average_years
+FROM Project p
+LEFT JOIN Employee e ON p.employee_id = e.employee_id
+GROUP BY p.project_id;
+"
+
+
+1633. Percentage of Users Attended a Contest.
+
+Tables: 1633Users, 1633Register.
+
+A.
+"
+SELECT contest_id, ROUND(COUNT(user_id) * 100 / (SELECT COUNT(user_id) FROM Users), 2) AS percentage
+FROM Register
+GROUP BY contest_id
+ORDER BY percentage DESC, contest_id;
+"
+
+
+1211. Queries Quality and Percentage.
+
+Table: 1211Queries.
+
+A.
+"
+SELECT query_name, 
+ROUND(AVG(rating / position), 2) AS quality, 
+ROUND(AVG(IF(rating < 3, 1, 0) * 100), 2) AS poor_query_percentage
+FROM Queries
+GROUP BY query_name;
+"
+
+
+1193. Monthly Transactions I.
+
+Table: 1193Transactions.
+
+A.
+"
+SELECT DATE_FORMAT(trans_date, '%Y-%m') AS month, country,
+COUNT(id) AS trans_count, SUM(state = 'approved') AS approved_count,
+SUM(amount) AS trans_total_amount,SUM(IF(state = 'approved', amount, 0)) AS approved_total_amount
+FROM Transactions
+GROUP BY month, country;
+"
+
+
+1174. Immediate Food Delivery II.
+
+Table: 1174Delivery.
+
+A.
+"
+SELECT ROUND(SUM(IF(order_date = customer_pref_delivery_date, 1, 0)) * 100 / COUNT(DISTINCT customer_id), 2) 
+AS immediate_percentage
+FROM Delivery
+WHERE (customer_id, order_date) IN (
+SELECT customer_id, MIN(order_date) AS firstorderdate
+FROM Delivery 
+GROUP BY customer_id );
+"
+
+
+550. Game Play Analysis IV.
+
+Table: 550Activity.
+
+A.
+"
+SELECT ROUND(COUNT(DISTINCT b.player_id) / COUNT(DISTINCT a.player_id), 2) AS fraction
+FROM (
+SELECT player_id, MIN(event_date) AS event_date 
+FROM Activity 
+GROUP BY player_id
+) a LEFT JOIN Activity b ON a.player_id = b.player_id 
+AND b.event_date = a.event_date + INTERVAL 1 DAY;
+"
+
+
+
+4. SORTING AND GROUPING .
+
+2356. Number of Unique Subjects Taught by Each Teacher.
+
+Table: 2356Teacher.
+
+A.
+"
+SELECT teacher_id, COUNT(DISTINCT subject_id) AS cnt
+FROM Teacher
+GROUP BY teacher_id;
+"
+
+
+1141. User Activity for the Past 30 Days I.
+
+Table: 1141Activity.
+
+A.
+"
+SELECT activity_date AS day,COUNT(DISTINCT user_id) AS active_users
+FROM activity
+WHERE activity_date BETWEEN DATE_SUB('2019-07-27', INTERVAL 29 DAY) AND '2019-07-27'
+GROUP BY activity_date;
+"
+
+
+1070. Product Sales Analysis III.
+
+Table: 1070Sales.
+
+A.
+"
+SELECT product_id, year AS first_year, quantity, price
+FROM Sales
+WHERE (product_id, year) IN (
+SELECT product_id, MIN(year) AS year
+FROM Sales
+GROUP BY product_id);
+"
+
+
+596. Classes With at Least 5 Students.
+
+Table: 596Courses.
+
+A.
+"
+SELECT class
+FROM (
+SELECT class, COUNT(student) AS c
+FROM Courses
+GROUP BY class) AS t
+WHERE c >= 5;
+"
+
+
+1729. Find Followers Count.
+
+Table: 1729Followers.
+
+A.
+"
+SELECT user_id, COUNT(DISTINCT follower_id) AS followers_count
+FROM Followers
+GROUP BY user_id;
+"
+
+
+619. Biggest Single Number.
+
+Table: 619MyNumbers.
+
+A.
+"
+SELECT MAX(num) AS num
+FROM (
+SELECT num
+FROM MyNumbers
+GROUP BY num 
+HAVING COUNT(*) = 1
+) n;
+"
+
+
+1045. Customers Who Bought All Products.
+
+Tables: 1045Customer, 1045Product.
+
+A.
+"
+SELECT customer_id
+FROM Customer
+GROUP BY customer_id
+HAVING COUNT(DISTINCT product_key) = (
+SELECT COUNT(product_key)
+FROM  Product);
+"
+
+
+
+5. ADVANCED SELECT AND JOINS .
+
+1731. The Number of Employees Which Report to Each Employee.
+
+Table: 1731Employees.
+
+A.
+"
+SELECT e1.employee_id,e1.name,
+COUNT(e2.employee_id) AS reports_count,
+ROUND(AVG(e2.age)) AS average_age
+FROM Employees e1
+INNER JOIN Employees e2 
+ON e1.employee_id = e2.reports_to
+GROUP BY e1.employee_id
+ORDER BY e1.employee_id;
+"
+
+
+1789. Primary Department for Each Employee.
+
+Table: 1789Employee.
+
+A.
+"
+SELECT employee_id, department_id 
+FROM Employee 
+WHERE primary_flag = 'Y'
+UNION
+SELECT employee_id, department_id 
+FROM Employee 
+GROUP BY employee_id 
+HAVING COUNT(*) = 1;
+"
+
+
+610. Triangle Judgement.
+
+Table: 610Triangle.
+
+A.
+"
+SELECT x, y, z, 
+IF(x + y > z AND y + z > x AND z + x > y, 'Yes', 'No') AS triangle
+FROM Triangle;
+"
+
+
+180. Consecutive Numbers.
+
+Table: 180Logs.
+
+A.
+"
+SELECT DISTINCT l1.num AS ConsecutiveNums
+FROM Logs l1, Logs l2, Logs l3
+WHERE l1.id - l2.id = 1 AND l2.id - l3.id = 1
+AND l1.num = l2.num AND l2.num = l3.num;
+"
+
+
+1164. Product Price at a Given Date.
+
+Table: 1164Products.
+
+A.
+"
+SELECT product_id, new_price AS price
+FROM Products
+WHERE (product_id, change_date) IN (
+SELECT product_id, MAX(change_date)
+FROM Products
+WHERE change_date <= '2019-08-16'
+GROUP BY product_id)
+UNION
+SELECT product_id, 10 AS price
+FROM Products
+WHERE product_id NOT IN (
+SELECT product_id
+FROM Products
+WHERE change_date <= '2019-08-16');
+"
+
+
+1204. Last Person to Fit in the Bus.
+
+Table: 1204Queue.
+
+A.
+"
+SELECT a.person_name
+FROM Queue a INNER JOIN Queue b
+ON a.turn >= b.turn
+GROUP BY a.turn
+HAVING SUM(b.weight) <= 1000
+ORDER BY SUM(b.weight) DESC
+LIMIT 1;
+"
+
+
+1907. Count Salary Categories.
+
+Table: 1907Accounts.
+
+A.
+"
+SELECT 'Low Salary' AS category, COUNT(income) AS accounts_count
+FROM Accounts
+WHERE income < 20000
+UNION
+SELECT 'Average Salary' AS category, COUNT(income) AS accounts_count
+FROM Accounts
+WHERE income BETWEEN 20000 AND 50000
+UNION
+SELECT 'High Salary' AS category, COUNT(income) AS accounts_count
+FROM Accounts
+WHERE income > 50000;
+"
+
+
+
+6. SUBQUERIES .
+
+1978. Employees Whose Manager Left the Company.
+
+Table: 1978Employees.
+
+A.
+"
+SELECT employee_id
+FROM Employees
+WHERE salary < 30000 AND manager_id NOT IN (
+SELECT employee_id 
+FROM Employees)
+ORDER BY employee_id;
+"
+
+
+626. Exchange Seats.
+
+Table: 626Seat.
+
+A.
+"
+SELECT CASE
+WHEN id = (SELECT MAX(id) FROM Seat) AND MOD(id, 2) = 1 THEN id
+WHEN MOD(id, 2) = 1 THEN id + 1
+ELSE id - 1
+END AS id,student
+FROM Seat
+ORDER BY id;
+"
+
+
+1341. Movie Rating.
+
+Tables: 1341Movies, 1341Users, 1341MovieRating.
+
+A.
+"
+(SELECT name AS results
+FROM Users
+INNER JOIN MovieRating USING(user_id)
+GROUP BY user_id
+ORDER BY COUNT(rating) DESC, name
+LIMIT 1)
+UNION ALL
+(SELECT title AS results
+FROM Movies INNER JOIN MovieRating USING(movie_id)
+WHERE MONTH(created_at) = '02' AND YEAR(created_at) = '2020'
+GROUP BY movie_id
+ORDER BY AVG(rating) DESC, title
+LIMIT 1);
+"
+
+
+1321. Restaurant Growth.
+
+Table: 1321Customer.
+
+A.
+"
+SELECT visited_on,
+(SELECT SUM(amount)
+FROM Customer
+WHERE visited_on BETWEEN 
+DATE_SUB(a.visited_on, INTERVAL 6 DAY) AND a.visited_on) AS amount,
+(SELECT ROUND(SUM(amount) / 7, 2)
+FROM Customer
+WHERE visited_on BETWEEN 
+DATE_SUB(a.visited_on, INTERVAL 6 DAY) AND a.visited_on) AS average_amount
+FROM Customer a
+WHERE visited_on >= (
+SELECT DATE_ADD(MIN(visited_on), INTERVAL 6 DAY)
+FROM Customer)
+GROUP BY visited_on;
+"
+
+
+602. Friend Requests II: Who Has the Most Friends.
+
+Table: 602RequestAccepted.
+
+A.
+"
+SELECT id, COUNT(id) AS num
+FROM (
+SELECT requester_id AS id
+FROM RequestAccepted
+UNION ALL
+SELECT accepter_id AS id
+FROM RequestAccepted) as n
+GROUP BY id
+ORDER BY num DESC
+LIMIT 1;
+"
+
+
+585. Investments in 2016.
+
+Table: 585Insurance.
+
+A.
+"
+SELECT ROUND(SUM(tiv_2016), 2) AS tiv_2016
+FROM Insurance
+WHERE tiv_2015 IN (
+SELECT tiv_2015
+FROM Insurance 
+GROUP BY tiv_2015
+HAVING COUNT(*) > 1)
+AND (lat, lon) IN (
+SELECT lat, lon
+FROM Insurance
+GROUP BY lat, lon
+HAVING COUNT(*) = 1);
+"
+
+
+185. Department Top Three Salaries.
+
+Tables: 185Employee, 185Department.
+
+A.
+"
+SELECT Department, Employee, Salary 
+FROM (
+SELECT d.name AS Department, e.name AS Employee, 
+e.salary AS Salary,
+DENSE_RANK() OVER (
+PARTITION BY d.name 
+ORDER BY e.salary DESC) AS Ranks
+FROM Employee e LEFT JOIN Department d 
+ON e.departmentId = d.id) as N
+WHERE Ranks <= 3;
+"
+
+
+
+7. ADVANCED STRING FUNCTIONS / REGEX / CLAUSE .
+
+1667. Fix Names in a Table.
+
+Table: 1667Users.
+
+A.
+"
+SELECT user_id, CONCAT(
+UPPER(SUBSTRING(name, 1, 1)),
+LOWER(SUBSTRING(name, 2))) AS name
+FROM Users
+ORDER BY user_id;
+
+"
+
+
+1527. Patients With a Condition.
+
+Table: 1527Patients.
+
+A.
+"
+SELECT *
+FROM Patients
+WHERE conditions LIKE 'DIAB1%' OR conditions LIKE '% DIAB1%';
+"
+
+
+196. Delete Duplicate Emails.
+
+Table: 196Person.
+
+A.
+"
+DELETE P2
+FROM Person AS P1
+INNER JOIN Person AS P2
+ON (P1.email = P2.email)
+WHERE P1.id < P2.id;
+"
+
+
+176. Second Highest Salary.
+
+Table: 176Employee.
+
+A.
+"
+WITH RankedEmployees AS (
+SELECT *, DENSE_RANK() OVER(ORDER BY salary DESC) AS `rank`
+FROM Employee)
+SELECT MAX(salary) AS SecondHighestSalary
+FROM RankedEmployees
+WHERE `rank` = 2;
+"
+
+
+1484. Group Sold Products By The Date.
+
+Table 1484Activities.
+
+A.
+"
+SELECT sell_date, COUNT(DISTINCT product) AS num_sold,
+GROUP_CONCAT(DISTINCT product ORDER BY product) AS products
+FROM Activities
+GROUP BY sell_date;
+"
+
+
+1327. List the Products Ordered in a Period.
+
+Tables: 1327Products, 1327Orders.
+
+A.
+"
+SELECT Products.product_name, SUM(Orders.unit) AS unit
+FROM Products
+INNER JOIN Orders
+USING (product_id)
+WHERE DATE_FORMAT(Orders.order_date, '%Y-%m') = '2020-02'
+GROUP BY product_id
+HAVING SUM(Orders.unit) >= 100;
+"
+
+
+1517. Find Users With Valid E-Mails.
+
+Table: 1517Users.
+
+A.
+"
+SELECT * 
+FROM users
+WHERE REGEXP_LIKE(mail, '^[a-zA-Z][a-zA-Z0-9_.-]*@leetcode\\.com$', 'c');
+"
+
+
